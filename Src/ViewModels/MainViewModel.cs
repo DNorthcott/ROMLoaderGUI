@@ -23,10 +23,13 @@ namespace ROMLoader.ViewModels
         private List<RunOfMine> listOfROMS;
         private Models.ROMLoader loader;
 
+        private RunOfMine primaryROM;
+
         // Variables for displaying data.
         private Blend primaryBlend;
         private ObservableCollection<string> blendCycle;
-        private RunOfMine primaryROM;
+        private List<Stockpile> stockpiles;
+        
         private int loadTime;
         private int maxWaitTime;
 
@@ -36,8 +39,8 @@ namespace ROMLoader.ViewModels
         public  MainViewModel()
         {
             database = new SQLiteAsyncConnection("CoalMineDB.db");
-            CreateBlends();
-            CreateROM();
+            GetBlend();
+            GetStockpiles();
 
 
             IncreaseLoadTimeCommand = new RelayCommand(IncreaseLoadTime);
@@ -53,6 +56,15 @@ namespace ROMLoader.ViewModels
             LoadTime = LoadTime + 1;
         }
 
+        public List<Stockpile> Stockpiles
+        {
+            get { return stockpiles; }
+            set
+            {
+                stockpiles = value;
+                OnPropertyChanged("Stockpiles");
+            }
+        }
 
         public ObservableCollection<string> BlendCycle
         {
@@ -93,10 +105,11 @@ namespace ROMLoader.ViewModels
             }
         }
 
-        private async Task CreateROM()
+        private async Task GetStockpiles()
         {
             listOfROMS = await DatabaseQueries.GetRunOfMineAsync(DateTime.Now, database);
             primaryROM = listOfROMS[0];
+            stockpiles = primaryROM.Stockpiles;
         }
 
         /// <summary>
@@ -104,7 +117,7 @@ namespace ROMLoader.ViewModels
         /// Sets 
         /// </summary>
         /// <returns></returns>
-        private async Task CreateBlends()
+        private async Task GetBlend()
         {
             listOfBlends = await DatabaseQueries.GetBlendsAsync(DateTime.Today, database);
 
