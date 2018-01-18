@@ -4,10 +4,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using ROMLoader.Annotations;
 using ROMLoader.Models;
 using ROMLoader.Src.Helpers;
 using SQLite;
+
 
 namespace ROMLoader.ViewModels
 {
@@ -19,9 +21,9 @@ namespace ROMLoader.ViewModels
     {
         // Variables not required for view.
         private readonly SQLiteAsyncConnection database;
-        private List<Blend> listOfBlends;
+        private Blend blend;
         private List<RunOfMine> listOfROMS;
-        private Models.ROMLoader loader;
+        private Loader loader;
 
         private RunOfMine primaryROM;
 
@@ -44,6 +46,22 @@ namespace ROMLoader.ViewModels
 
 
             IncreaseLoadTimeCommand = new RelayCommand(IncreaseLoadTime);
+            DecreaseLoadTimeCommand = new RelayCommand(DecreaseLoadTime);
+
+            IncreaseMaxWaitTimeCommand = new RelayCommand(IncreaseMaxWaitTime);
+            DecreaseMaxWaitTimeCommand = new RelayCommand(DecreaseMaxWaitTime);
+        }
+
+        public RelayCommand IncreaseMaxWaitTimeCommand
+        {
+            get;
+            set;
+        }
+
+        public RelayCommand DecreaseMaxWaitTimeCommand
+        {
+            get;
+            set;
         }
 
         public RelayCommand IncreaseLoadTimeCommand
@@ -51,9 +69,120 @@ namespace ROMLoader.ViewModels
           set;  
         }
 
-        void IncreaseLoadTime(object parameter)
+        public RelayCommand DecreaseLoadTimeCommand
         {
-            LoadTime = LoadTime + 1;
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Checks if the ROM loader exists.  If not and a blend exists, 
+        /// it will be created.
+        /// </summary>
+        /// <returns>Returns true if exists or can be created.</returns>
+        private bool RomLoaderExists()
+        {
+            if (loader != null)
+            {
+                return true;
+            }
+           else if (blendCycle == null)
+            {
+                return false;
+            }
+            else
+            {
+                TimeSpan loadTime = new TimeSpan(0, 0, 0, 0);
+                TimeSpan maxWaitTime = new TimeSpan(0, 0, 0, 0);
+
+                loader = new Loader(blend.Cycle, loadTime, maxWaitTime);
+                return true;
+            }
+        }
+
+
+        private void IncreaseMaxWaitTime(object parameter)
+        {
+            if (RomLoaderExists())
+            {
+                ChangeWaitTime(true);
+            }
+        }
+
+        private void DecreaseMaxWaitTime(object parameter)
+        {
+
+            if (RomLoaderExists())
+            {
+                if (loader.MaxWaitTime.Minutes == 0)
+                {
+                    //TODO: Maybe throw a window saying cannot make negative load time. 
+                    // Further probably should throw exception.
+                    return;
+                }
+                ChangeWaitTime(false);
+            }
+        }
+
+        private void IncreaseLoadTime(object parameter)
+        {
+            if (RomLoaderExists())
+            {
+                ChangeLoadTime(true);
+            }
+        }
+
+        private void DecreaseLoadTime(object parameter)
+        {
+
+            if (RomLoaderExists()) 
+            {
+                if (loader.LoadTime.Minutes == 0)
+                {
+                    //TODO: Maybe throw a window saying cannot make negative load time. 
+                    // Further probably should throw exception.
+                    return;
+                }
+                ChangeLoadTime(false);
+            }
+        }
+
+        private void ChangeWaitTime(bool increase)
+        {
+            TimeSpan waitTime = loader.MaxWaitTime;
+            TimeSpan oneMinute = new TimeSpan(0, 0, 1, 0);
+
+            if (increase)
+            {
+
+                loader.MaxWaitTime = waitTime.Add(oneMinute);
+
+            }
+            else
+            {
+                loader.MaxWaitTime = waitTime.Subtract(oneMinute);
+            }
+
+            MaxWaitTime = loader.MaxWaitTime.Minutes.ToString();
+        }
+
+        private void ChangeLoadTime(bool increase)
+        {
+            TimeSpan loadTime = loader.LoadTime;
+            TimeSpan oneMinute = new TimeSpan(0, 0, 1, 0);
+
+            if (increase)
+            {
+                
+                loader.LoadTime = loadTime.Add(oneMinute);
+
+            }
+            else
+            {
+                loader.LoadTime = loadTime.Subtract(oneMinute);
+            }
+
+            LoadTime = loader.LoadTime.Minutes.ToString();
         }
 
         public List<Stockpile> Stockpiles
@@ -91,8 +220,9 @@ namespace ROMLoader.ViewModels
             get { return maxWaitTime.ToString(); }
             set
             {
-                maxWaitTime = Int32.Parse(value);
-                OnPropertyChanged("MaxWaitTime");
+                    maxWaitTime = Int32.Parse(value);
+                    OnPropertyChanged("MaxWaitTime");
+
             }
         }
 
@@ -119,10 +249,13 @@ namespace ROMLoader.ViewModels
         /// <returns></returns>
         private async Task GetBlend()
         {
-            listOfBlends = await DatabaseQueries.GetBlendsAsync(DateTime.Today, database);
+            List<Blend> listOfBlends = await DatabaseQueries.GetBlendsAsync(DateTime.Today, database);
+
+            // Remove the blend from the list.
+            blend = listOfBlends[0];
 
             // Create list for blend cycle view.
-            BlendCycle = new ObservableCollection<string>(listOfBlends[0].Cycle);
+            BlendCycle = new ObservableCollection<string>(blend.Cycle);
         }
 
         /// <summary>

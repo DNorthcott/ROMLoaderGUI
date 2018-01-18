@@ -3,17 +3,17 @@ using System.Collections.Generic;
 
 namespace ROMLoader.Models
 {
-    public class ROMLoader
+    public class Loader
     {
         // Represents the sequence coals must be blended.
         private readonly List<string> blendCycle;
         // Points to the index of the current coal in the blend cycle.
         private int index;
         // The time it takes to load a truck.
-        private readonly TimeSpan loadTime;
+        private TimeSpan loadTime;
 
         //The maximum time a truck is allowed to wait before dumping coal.
-        private readonly TimeSpan maxWaitTime;
+        private TimeSpan maxWaitTime;
 
         /// <summary>
         /// Initialises a new ROMLoader class.
@@ -21,7 +21,7 @@ namespace ROMLoader.Models
         /// <param name="blendCycle">The list that contains the sequence of how coals are to be loaded.</param>
         /// <param name="maxWaitTime">The maximum time a truck is allowed to wait before dumping coal.</param>
         /// <param name="loadTime">The time it takes to load a truck.</param>
-        public ROMLoader(List<string> blendCycle, TimeSpan maxWaitTime, TimeSpan loadTime)
+        public Loader(List<string> blendCycle, TimeSpan maxWaitTime, TimeSpan loadTime)
         {
             this.blendCycle = blendCycle;
             index = 0;
@@ -155,6 +155,18 @@ namespace ROMLoader.Models
                     return true;
             }
             return false;
+        }
+
+        public TimeSpan LoadTime
+        {
+            get { return loadTime; }
+            set { loadTime = value; }
+        }
+
+        public TimeSpan MaxWaitTime
+        {
+            get { return maxWaitTime; }
+            set { maxWaitTime = value; }
         }
     }
 }
