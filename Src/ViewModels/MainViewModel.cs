@@ -93,14 +93,10 @@ namespace ROMLoader.ViewModels
             }
         }
 
-        //TODO: Create properties for blend and run of mine.
-
         private async Task CreateROM()
         {
             listOfROMS = await DatabaseQueries.GetRunOfMineAsync(DateTime.Now, database);
-            primaryROM = SetPrimaryRom(listOfROMS);
-
-
+            primaryROM = listOfROMS[0];
         }
 
         /// <summary>
@@ -112,43 +108,9 @@ namespace ROMLoader.ViewModels
         {
             listOfBlends = await DatabaseQueries.GetBlendsAsync(DateTime.Today, database);
 
-            // Determine the primary blend for today.
-            PrimaryBlend = SetPrimaryBlend(listOfBlends);
-
             // Create list for blend cycle view.
-            BlendCycle = new ObservableCollection<string>(PrimaryBlend.Cycle);
+            BlendCycle = new ObservableCollection<string>(listOfBlends[0].Cycle);
         }
-
-        /// <summary>
-        /// Move this helper.
-        /// </summary>
-        /// <param name="blends"></param>
-        /// <returns></returns>
-        private Blend SetPrimaryBlend(List<Blend> blends)
-        {
-            listOfBlends.Sort();
-            if (listOfBlends.Count != 0)
-            {
-
-                return listOfBlends[listOfBlends.Count - 1];
-            }
-
-            return null;
-        }
-
-        private RunOfMine SetPrimaryRom(List<RunOfMine> runOfMines)
-        {
-            listOfROMS.Sort();
-            if (listOfROMS.Count != 0)
-            {
-                return listOfROMS[listOfROMS.Count - 1];
-            }
-            else
-            {
-                return null;
-            }
-        }
-
 
         /// <summary>
         /// TODO: Research this more. I don't know how this works and its from resharper.
