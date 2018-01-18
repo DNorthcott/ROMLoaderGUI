@@ -17,7 +17,7 @@ namespace ROMLoader.Src.Helpers
         {
             string sql = "SELECT * FROM blend WHERE DateOfBlend = " + "'" + date.ToString("yyyy-MM-dd") + "'" +
                 "and Priority = (select MAX(Priority)  FROM blend WHERE DateOfBlend = '" + date.ToString("yyyy-MM-dd")
-                + "'";
+                + "')";
 
             List<Blend> blend = await database.QueryAsync<Blend>(sql);
 
@@ -27,8 +27,8 @@ namespace ROMLoader.Src.Helpers
         public static async Task<List<RunOfMine>> GetRunOfMineAsync(DateTime date, SQLiteAsyncConnection database)
         {
             string sql = "SELECT * FROM RunOfMine WHERE date = " + "'" + date.ToString("yyyy-MM-dd") + "'" +
-                         "and Priority = (select MAX(Priority)  FROM blend WHERE DateOfBlend = '" + date.ToString("yyyy-MM-dd")
-                         + "'";
+                         "and Priority = (select MAX(Priority)  FROM RunOfMine WHERE date = '" + date.ToString("yyyy-MM-dd")
+                         + "')";
 
             List<RunOfMine> runOfMine = await database.QueryAsync<RunOfMine>(sql);
 

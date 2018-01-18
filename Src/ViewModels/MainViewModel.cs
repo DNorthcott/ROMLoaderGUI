@@ -109,7 +109,7 @@ namespace ROMLoader.ViewModels
         {
             listOfROMS = await DatabaseQueries.GetRunOfMineAsync(DateTime.Now, database);
             primaryROM = listOfROMS[0];
-            stockpiles = primaryROM.Stockpiles;
+            Stockpiles = primaryROM.Stockpiles;
         }
 
         /// <summary>

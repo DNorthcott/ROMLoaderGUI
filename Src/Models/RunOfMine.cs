@@ -155,8 +155,6 @@ namespace ROMLoader.Models
                     cycle = new List<string>();
                 }
 
-
-
                 return cycle;
             }
 
