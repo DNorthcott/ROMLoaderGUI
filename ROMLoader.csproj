@@ -71,6 +71,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="Src\Helpers\DatabaseQueries.cs" />
+    <Compile Include="Src\Helpers\RelayCommand.cs" />
     <Compile Include="Src\Models\Blend.cs" />
     <Compile Include="Src\Models\CoalMovement.cs" />
     <Compile Include="Src\Helpers\DatabaseServices.cs" />

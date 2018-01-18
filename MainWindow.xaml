@@ -26,7 +26,7 @@
             <Border Grid.Column="0" Background="AliceBlue" BorderThickness="10">
                 <StackPanel>
                     <TextBlock FontSize="18" FontWeight="Bold" TextAlignment="Center" Padding="8">Blend Cycle</TextBlock>
-                    <DataGrid></DataGrid>
+                    <ListView ItemsSource="{Binding BlendCycle}" ></ListView>
                 </StackPanel>
             </Border>
 
@@ -82,14 +82,14 @@
                             <TextBlock Grid.Row="1" Grid.Column="0" Padding="10, 5, 0, 5">Maximum truck wait time:</TextBlock>
                             
                             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                                <TextBox  Margin="5,5,0,5" Width="50" Text="0"  />
-                                <Button  Margin="5,5,0,5" Content="˄" Width="20"  />
+                                <TextBox  Margin="5,5,0,5" Width="50" Text="{Binding LoadTime}"   />
+                                <Button  Margin="5,5,0,5" Content="˄" Width="20" Command="{Binding IncreaseLoadTimeCommand}" />
                                 <Button  Margin="0,5,0,5"  Content="˅" Width="20" />
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-                                <TextBox Margin="5,5,0,5" Width="50" Text="0"  />
-                                <Button  Margin="5,5,0,5" Content="˄" Width="20"  />
+                                <TextBox Margin="5,5,0,5" Width="50"  Text= "{Binding MaxWaitTime}"  />
+                                <Button  Margin="5,5,0,5" Command=""  Content="˄" Width="20"   />
                                 <Button  Margin="0,5,0,5"  Content="˅" Width="20"  />
                             </StackPanel>
 

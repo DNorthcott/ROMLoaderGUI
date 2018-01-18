@@ -59,6 +59,8 @@ namespace ROMLoader.Models
             get { return cycle; }
         }
 
+
+
         public void AddCoalToCycle(int cycleNum, string coal)
         {
             if (coal == null)
