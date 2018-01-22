@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace ROMLoader.Models
 {
@@ -14,6 +15,10 @@ namespace ROMLoader.Models
 
         //The maximum time a truck is allowed to wait before dumping coal.
         private TimeSpan maxWaitTime;
+
+        //TODO: Might need to track minimum time here.  As to allow for loading of coal.
+
+        //TODO: Create a hashmap of already loaded coal movements? Or should we update the database?
 
         /// <summary>
         /// Initialises a new ROMLoader class.
@@ -45,9 +50,9 @@ namespace ROMLoader.Models
         /// 
         /// </summary>
         /// <param name="minimumTime">The starting time of loading.</param>
-        /// <param name="IncomingTrucks">List of coal movements coming from the pit.</param>
+        /// <param name="incomingTrucks">List of coal movements coming from the pit.</param>
         /// <returns>A list of coal movements that are to be allocated to the bin.</returns>
-        public List<CoalMovement> AllocateCoalMovements(DateTime minimumTime, List<CoalMovement> IncomingTrucks)
+        public List<CoalMovement> AllocateCoalMovements(DateTime minimumTime, List<CoalMovement> incomingTrucks)
         {
             // List of coal movements to be dumped into the bin.
             List<CoalMovement> allocatedCoalMovements = new List<CoalMovement>();
@@ -56,16 +61,17 @@ namespace ROMLoader.Models
             bool foundMovement = true;
 
             // Variable to hold the next coal required in blending cycle.
-            string requiredCoal = ""; 
+            string requiredCoal = null; 
 
             while (foundMovement)
             {
                 requiredCoal = GetNextCoal();
 
                 // Find coal movements.  
-                foundMovement = FindRequireCoal(minimumTime, requiredCoal, IncomingTrucks, allocatedCoalMovements);
+                foundMovement = FindRequiredCoal(minimumTime, requiredCoal, incomingTrucks, allocatedCoalMovements);
 
-                //If a truck was found.  Change new time to be the time the truck loaded coal into the bin.
+                //If a truck was found.  Change new time to be the time the truck loaded coal into the bin minus
+                // the max wait time.  This allows a truck to wait at the ROM.
                 if (allocatedCoalMovements.Count != 0)
                 {
                     minimumTime = allocatedCoalMovements[allocatedCoalMovements.Count - 1].PropDateTime
@@ -76,13 +82,17 @@ namespace ROMLoader.Models
 
 
             // TODO: Review timings for ROM truck.  This should be fine as is, due to case of no trucks found.
-            
+
             // Subtract load time.  May make changes to time here later to load rom truck earlier.
+           
+            //This was the loading of rom truck, will now be seperate call.
+            /*
             minimumTime = minimumTime.Subtract(loadTime);
             allocatedCoalMovements.Add(LoadROMTruck(requiredCoal, minimumTime));
-
+            */
             return allocatedCoalMovements;
         }
+
 
         /// <summary>
         /// Returns a new coal movement with the ROM truck labeled as the truck.
@@ -102,10 +112,10 @@ namespace ROMLoader.Models
         /// </summary>
         /// <param name="time"></param>
         /// <param name="requiredCoal"></param>
-        /// <param name="incomgCoalMovements"></param>
+        /// <param name="incomingCoalMovements"></param>
         /// <param name="resultOfMovements"></param>
         /// <returns></returns>
-        private bool FindRequireCoal(DateTime time, string requiredCoal, List<CoalMovement> incomingCoalMovements,
+        private bool FindRequiredCoal(DateTime time, string requiredCoal, List<CoalMovement> incomingCoalMovements,
             List<CoalMovement> resultOfMovements)
         {
 
@@ -141,21 +151,11 @@ namespace ROMLoader.Models
             return coal;
         }
 
-        /// <summary>
-        /// This may now be redundant.
-        /// </summary>
-        /// <param name="coal"></param>
-        /// <param name="movements"></param>
-        /// <returns></returns>
-        private bool MovementsContainRequiredCoal(string coal, List<CoalMovement> movements)
+        public string GetCurrentCoal()
         {
-            foreach (CoalMovement movement in movements)
-            {
-                if (movement.Coal.Equals(coal))
-                    return true;
-            }
-            return false;
+            return blendCycle[(index) % blendCycle.Count];
         }
+
 
         public TimeSpan LoadTime
         {

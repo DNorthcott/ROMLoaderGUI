@@ -5,6 +5,7 @@ namespace ROMLoader.Models
 {
     public class RunOfMine : IComparable
     {
+        private DateTime date;
         private List<string> cycle;
         private string stockpile1;
         private string stockpile10;
@@ -40,7 +41,9 @@ namespace ROMLoader.Models
             Stockpile10 = stockpile10;
         }
 
-        public string Date { get; set; }
+        public string Date { get { return date.ToString(); }
+            set { date = Convert.ToDateTime(value); }
+        }
 
         public int Priority { get; set; }
 
@@ -50,7 +53,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile1 = value;
-                AddStockpile("stockpile1", value);
+                AddStockpile("1", value);
             }
         }
 
@@ -60,7 +63,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile2 = value;
-                AddStockpile("stockpile2", value);
+                AddStockpile("2", value);
             }
         }
 
@@ -70,7 +73,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile3 = value;
-                AddStockpile("stockpile3", value);
+                AddStockpile("3", value);
             }
         }
 
@@ -80,7 +83,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile4 = value;
-                AddStockpile("stockpile4", value);
+                AddStockpile("4", value);
             }
         }
 
@@ -90,7 +93,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile5 = value;
-                AddStockpile("stockpile5", value);
+                AddStockpile("5", value);
             }
         }
 
@@ -100,7 +103,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile6 = value;
-                AddStockpile("stockpile6", value);
+                AddStockpile("6", value);
             }
         }
 
@@ -110,7 +113,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile7 = value;
-                AddStockpile("stockpile7", value);
+                AddStockpile("7", value);
             }
         }
 
@@ -120,7 +123,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile8 = value;
-                AddStockpile("stockpile8", value);
+                AddStockpile("8", value);
             }
         }
 
@@ -130,7 +133,7 @@ namespace ROMLoader.Models
             set
             {
                 stockpile9 = value;
-                AddStockpile("stockpile9", value);
+                AddStockpile("9", value);
             }
         }
 
@@ -140,12 +143,14 @@ namespace ROMLoader.Models
             set
             {
                 stockpile10 = value;
-                AddStockpile("stockpile10", value);
+                AddStockpile("10", value);
             }
         }
 
         public List<Stockpile> Stockpiles { get; private set; }
 
+        // This might redundant. TODO: review
+        /*
         public List<string> Cycle
         {
             get
@@ -159,6 +164,7 @@ namespace ROMLoader.Models
             }
 
         }
+        */
 
         /// <summary>
         ///     Compares the RunOfMine object.  A higher priority integer
@@ -180,7 +186,7 @@ namespace ROMLoader.Models
             return -1;
         }
 
-        public void AddStockpile(string stockpileName, string coal)
+        private void AddStockpile(string stockpileName, string coal)
         {
            
             if (Stockpiles == null)
@@ -215,6 +221,10 @@ namespace ROMLoader.Models
                 foreach (var s in Stockpiles)
                     if (!otherStockpileses.Contains(s))
                         equal = false;
+            }
+            else
+            {
+                return false;
             }
             return equal;
         }

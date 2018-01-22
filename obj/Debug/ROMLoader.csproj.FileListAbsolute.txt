@@ -24,3 +24,5 @@ C:\Projects\ROMLoaderGUI\ROMLoader\bin\Debug\SQLite-net.pdb
 C:\Projects\ROMLoaderGUI\ROMLoader\bin\Debug\SQLite-net.xml
 C:\Projects\ROMLoaderGUI\ROMLoader\obj\Debug\ROMLoader_Content.g.cs
 C:\Projects\ROMLoaderGUI\ROMLoader\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Projects\ROMLoaderGUI\ROMLoader\bin\Debug\nunit.framework.dll
+C:\Projects\ROMLoaderGUI\ROMLoader\bin\Debug\nunit.framework.xml

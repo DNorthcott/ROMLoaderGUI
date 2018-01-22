@@ -38,7 +38,7 @@ namespace ROMLoader.ViewModels
         /// <summary>
         /// Creates a new ROM.
         /// </summary>
-        public  MainViewModel()
+        public MainViewModel()
         {
             database = new SQLiteAsyncConnection("CoalMineDB.db");
             GetBlend();
@@ -52,6 +52,9 @@ namespace ROMLoader.ViewModels
             DecreaseMaxWaitTimeCommand = new RelayCommand(DecreaseMaxWaitTime);
         }
 
+        /// <summary>
+        /// Relay commands for buttons.
+        /// </summary>
         public RelayCommand IncreaseMaxWaitTimeCommand
         {
             get;

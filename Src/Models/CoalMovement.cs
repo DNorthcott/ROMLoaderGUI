@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace ROMLoader.Models
 {
@@ -12,6 +13,7 @@ namespace ROMLoader.Models
     {
         private string dateTimeArrival;
         private string endLocation;
+        private bool feed;
 
         /// <summary>
         ///     Creates a new CoalEntry class.
@@ -40,6 +42,31 @@ namespace ROMLoader.Models
         public string Truck { get; set; }
 
         public string Coal { get; set; }
+
+        /// <summary>
+        /// Determines if the coal is fed into the bin or stockpiled.
+        /// True - Direct feed.
+        /// False - Stockpiled.
+        /// </summary>
+        public int Feed
+        {
+            set
+            {
+                if (value == 1)
+                {
+                    feed = true;
+                }
+                else
+                {
+                    feed = false;
+                }
+            }
+        }
+
+        public bool FeedIntoBin
+        {
+            get { return feed; }
+        }
 
         public string DateTimeArrival
         {

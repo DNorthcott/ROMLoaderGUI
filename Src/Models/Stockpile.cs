@@ -5,26 +5,21 @@ namespace ROMLoader.Models
     public class Stockpile : IComparable
     {
 
-        private string name;
+  
         private string coal;
         private int stockPileNumber;
 
         public Stockpile(string name, string coal)
         {
-            this.name = name;
+            
             this.coal = coal;
 
-            stockPileNumber = Int32.Parse(name.Substring(9));
+            stockPileNumber = Int32.Parse(name);
         }
 
         public int StockPileNumber
         {
             get { return stockPileNumber; }
-        }
-
-        public string Name
-        {
-            get { return name; }
         }
 
         public string Coal
@@ -69,7 +64,7 @@ namespace ROMLoader.Models
 
             Stockpile otherStockpile = (Stockpile) obj;
 
-            if (Name == otherStockpile.Name && coal == otherStockpile.Coal &&
+            if (coal == otherStockpile.Coal &&
                 stockPileNumber == otherStockpile.StockPileNumber)
             {
                 return true;
