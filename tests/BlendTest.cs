@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using ROMLoader.Models;
+using SQLite;
 
 namespace ROMLoader.tests
 {
@@ -170,6 +171,12 @@ namespace ROMLoader.tests
             blend.GetNextCoal();
             Assert.AreEqual("13_34_F23", blend.GetCurrentCoal());
 
+        }
+
+        [Test]
+        public void ResetCycle()
+        {
+            //TODO: Create test stub.
         }
 
     }

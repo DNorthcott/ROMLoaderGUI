@@ -90,6 +90,10 @@ namespace ROMLoader.Models
             return cycle[(index) % cycle.Count];
         }
 
+        public void ResetCycle()
+        {
+            index = -1;
+        }
 
         private void AddCoalToCycle(int cycleNum, string coal)
         {
