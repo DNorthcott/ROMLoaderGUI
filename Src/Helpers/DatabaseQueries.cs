@@ -31,6 +31,7 @@ namespace ROMLoader.Src.Helpers
                          + "')";
 
             List<RunOfMine> runOfMine = await database.QueryAsync<RunOfMine>(sql);
+            
 
             return runOfMine;
         }

@@ -83,7 +83,9 @@
     <Compile Include="Src\Models\RunOfMine.cs" />
     <Compile Include="Src\Models\Stockpile.cs" />
     <Compile Include="Src\ViewModels\MainViewModel.cs" />
+    <Compile Include="tests\BlendTest.cs" />
     <Compile Include="tests\CoalMovementTest.cs" />
+    <Compile Include="tests\LoaderTest.cs" />
     <Compile Include="tests\RunOfMineTest.cs" />
     <Compile Include="tests\StockpileTest.cs" />
     <Page Include="MainWindow.xaml">

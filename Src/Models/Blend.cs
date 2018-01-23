@@ -7,14 +7,18 @@ namespace ROMLoader.Models
     {
         private List<string> cycle;
 
+        // Points to the index of the current coal in the blend cycle.
+        private int index;
+
 
         public Blend()
         {
-            cycle = new List<string>();
+            
+            index = -1;
         }
 
         public Blend(string dateOfBlend, int priority, string coal1, string coal2, string coal3, string coal4,
-            string coal5, string coal6, string coal7, string coal8, string coal9, string coal10)
+            string coal5, string coal6, string coal7, string coal8, string coal9, string coal10) : this()
         {
             DateOfBlend = dateOfBlend;
             Priority = priority;
@@ -28,6 +32,7 @@ namespace ROMLoader.Models
             Coal8 = coal8;
             Coal9 = coal9;
             Coal10 = coal10;
+           
         }
 
         public string DateOfBlend { get; set; }
@@ -59,9 +64,34 @@ namespace ROMLoader.Models
             get { return cycle; }
         }
 
+        /// <summary>
+        /// Returns the next coal in the cycle.  If the cycle has
+        /// not been started, will return the first item in the cycle.
+        /// </summary>
+        /// <returns></returns>
+        public string GetNextCoal()
+        {
+            index++;
+            
+            return GetCurrentCoal();
+        }
+
+        /// <summary>
+        /// Gets the current coal in the cycle.  If the cycle has not
+        /// been started will return the first item in the cycle.
+        /// </summary>
+        /// <returns></returns>
+        public string GetCurrentCoal()
+        {
+            if (index == 0 || index == -1)
+            {
+                return cycle[0];
+            }
+            return cycle[(index) % cycle.Count];
+        }
 
 
-        public void AddCoalToCycle(int cycleNum, string coal)
+        private void AddCoalToCycle(int cycleNum, string coal)
         {
             if (coal == null)
             {
@@ -88,6 +118,11 @@ namespace ROMLoader.Models
             return -1;
         }
 
+        /// <summary>
+        /// A blend is considered equal when the date, priority and cycle is the same.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (obj == null)

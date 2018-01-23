@@ -98,7 +98,7 @@ namespace ROMLoader.ViewModels
                 TimeSpan loadTime = new TimeSpan(0, 0, 0, 0);
                 TimeSpan maxWaitTime = new TimeSpan(0, 0, 0, 0);
 
-                loader = new Loader(blend.Cycle, loadTime, maxWaitTime);
+                loader = new Loader(blend, loadTime, maxWaitTime);
                 return true;
             }
         }

@@ -7,9 +7,8 @@ namespace ROMLoader.Models
     public class Loader
     {
         // Represents the sequence coals must be blended.
-        private readonly List<string> blendCycle;
-        // Points to the index of the current coal in the blend cycle.
-        private int index;
+        private Blend blend;
+
         // The time it takes to load a truck.
         private TimeSpan loadTime;
 
@@ -26,10 +25,9 @@ namespace ROMLoader.Models
         /// <param name="blendCycle">The list that contains the sequence of how coals are to be loaded.</param>
         /// <param name="maxWaitTime">The maximum time a truck is allowed to wait before dumping coal.</param>
         /// <param name="loadTime">The time it takes to load a truck.</param>
-        public Loader(List<string> blendCycle, TimeSpan maxWaitTime, TimeSpan loadTime)
+        public Loader(Blend blend, TimeSpan maxWaitTime, TimeSpan loadTime)
         {
-            this.blendCycle = blendCycle;
-            index = 0;
+            this.blend = blend;
             this.maxWaitTime = maxWaitTime;
             this.loadTime = loadTime;
             
@@ -65,7 +63,7 @@ namespace ROMLoader.Models
 
             while (foundMovement)
             {
-                requiredCoal = GetNextCoal();
+                requiredCoal = blend.GetNextCoal();
 
                 // Find coal movements.  
                 foundMovement = FindRequiredCoal(minimumTime, requiredCoal, incomingTrucks, allocatedCoalMovements);
@@ -100,9 +98,9 @@ namespace ROMLoader.Models
         /// <param name="requiredCoal">The coal in the the coal movement.</param>
         /// <param name="time">ETA of the rom truck to be loaded.</param>
         /// <returns></returns>
-        private CoalMovement LoadROMTruck(string requiredCoal, DateTime time)
+        public CoalMovement LoadROMTruck(DateTime time)
         {
-            CoalMovement romMovement = new CoalMovement(requiredCoal, "ROM Truck", time);
+            CoalMovement romMovement = new CoalMovement(blend.GetCurrentCoal(), "ROM Truck", time);
             return romMovement;
         }
 
@@ -143,18 +141,7 @@ namespace ROMLoader.Models
             return false;
         }
         // TODO: breaks at end of cycle.
-        private string GetNextCoal()
-        {
-            
-            string coal = blendCycle[(index) % blendCycle.Count];
-            index++;
-            return coal;
-        }
 
-        public string GetCurrentCoal()
-        {
-            return blendCycle[(index) % blendCycle.Count];
-        }
 
 
         public TimeSpan LoadTime
