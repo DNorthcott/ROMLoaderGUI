@@ -40,9 +40,9 @@ namespace ROMLoader.Src.Helpers
         public static async Task UpdateCoalMovements(CoalMovement coalMovement, SQLiteAsyncConnection database)
         {
             string sql = "UPDATE CoalMovement" +
-                         "SET Feed = 1" +
-                         "WHERE Coal = '" + coalMovement.Coal + "' AND Truck = '" + coalMovement.Truck + 
-                         "' AND DateTimeArrival = '" + coalMovement.PropDateTime.ToString("yyyy - MM - dd HH: mm:ss") +
+                         " SET Feed = 1" +
+                         " WHERE Coal = '" + coalMovement.Coal + "' AND Truck = '" + coalMovement.Truck + 
+                         "' AND DateTimeArrival = '" + coalMovement.PropDateTime.ToString("yyyy-MM-dd HH:mm:ss") +
                          "'";
 
             await database.QueryAsync<CoalMovement>(sql);

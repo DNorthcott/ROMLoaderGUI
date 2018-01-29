@@ -135,6 +135,13 @@ namespace ROMLoader.ViewModels
 
                 CoalIndex = loader.CycleIndex();
 
+
+                //Update allocated movements to be loaded into bin in database.
+
+                foreach (CoalMovement m in movements)
+                {
+                   await DatabaseQueries.UpdateCoalMovements(m, database);
+                }
             }
         }
 
