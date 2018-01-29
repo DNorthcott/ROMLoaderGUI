@@ -17,7 +17,7 @@ namespace ROMLoader.Src.Helpers
         {
             string sql = "SELECT * FROM blend WHERE DateOfBlend = " + "'" + date.ToString("yyyy-MM-dd") + "'" +
                 "and Priority = (select MAX(Priority)  FROM blend WHERE DateOfBlend = '" + date.ToString("yyyy-MM-dd")
-                + " and Feed = 0 ')";
+                + "')";
 
             List<Blend> blend = await database.QueryAsync<Blend>(sql);
 

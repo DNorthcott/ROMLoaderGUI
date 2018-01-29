@@ -90,6 +90,15 @@ namespace ROMLoader.Models
             return cycle[(index) % cycle.Count];
         }
 
+        public int GetCoalIndex()
+        {
+            if (index == 0 || index == -1)
+            {
+                return 0;
+            }
+            return index % cycle.Count;
+        }
+
         public void ResetCycle()
         {
             index = -1;

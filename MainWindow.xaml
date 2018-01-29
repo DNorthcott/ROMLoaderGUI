@@ -26,7 +26,8 @@
             <Border Grid.Column="0" Background="AliceBlue" BorderThickness="10">
                 <StackPanel>
                     <TextBlock FontSize="18" FontWeight="Bold" TextAlignment="Center" Padding="8">Blend Cycle</TextBlock>
-                    <ListView ItemsSource="{Binding BlendCycle}" ></ListView>
+                    <ListView Margin="8, 0, 8 , 0" ItemsSource="{Binding BlendCycle}"
+                              SelectedIndex="{Binding CoalIndex}"  IsHitTestVisible="false"  ></ListView>
                 </StackPanel>
             </Border>
 
@@ -34,7 +35,12 @@
             <Border Grid.Column="1" Background="AliceBlue" BorderThickness="10">
                 <StackPanel>
                     <TextBlock FontSize="18" FontWeight="Bold" TextAlignment="Center" Padding="8">Stockpiles</TextBlock>
-                    <DataGrid ItemsSource="{Binding Stockpiles}"></DataGrid>
+                    <DataGrid Margin="8, 0, 8 , 0" ItemsSource="{Binding Stockpiles}" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Stockpile Number" Binding="{Binding StockPileNumber}" Width="*" />
+                            <DataGridTextColumn Header="Coal" Binding="{Binding Coal}"  Width="2*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </StackPanel>
             </Border>
 
@@ -51,11 +57,19 @@
                     <StackPanel>
                         <TextBlock FontSize="18" FontWeight="Bold" TextAlignment="Center" Padding="8">Load Schedule</TextBlock>
                         <TextBlock Padding="8,0,0,8">Incoming Trucks:</TextBlock>
-                        <TextBox Height="250" Margin="8, 0, 0 , 0"></TextBox>
+                        <DataGrid Height="250" Margin="8, 0, 8 , 0" ItemsSource="{Binding CoalMovements}" AutoGenerateColumns="False"
+                                  CanUserAddRows="false" IsReadOnly="True" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Truck Name" Binding="{Binding Truck}"  Width="1*"/>
+                                <DataGridTextColumn Header="Coal" Binding="{Binding Coal}"   Width="*"/>
+                                <DataGridTextColumn Header="Arrival Time" Binding="{Binding DateTimeArrival}"  Width="2*"/>
+                                
+                            </DataGrid.Columns>
+                        </DataGrid>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Margin="8, 10, 10, 0">Load:</TextBlock>
-                            <TextBox Margin="0, 10, 0, 0" Width="150"></TextBox>
-                            <Button Margin="8, 10, 0, 0" Width="101">Load Coal</Button>
+                            <TextBox Margin="0, 10, 0, 0" Width="150" Text = "{Binding LoadingCoal}" IsReadOnly="True"></TextBox>
+                            <Button Margin="8, 10, 8, 0" Width="93" Command="{Binding LoadCoalCommand}">Load Coal</Button>
                         </StackPanel>
                         
                     </StackPanel>

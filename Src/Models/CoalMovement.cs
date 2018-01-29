@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace ROMLoader.Models
@@ -115,5 +116,7 @@ namespace ROMLoader.Models
                 return true;
             return false;
         }
+
+
     }
 }

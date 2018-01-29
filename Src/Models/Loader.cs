@@ -172,7 +172,10 @@ namespace ROMLoader.Models
             blend.ResetCycle();
         }
 
-
+        public int CycleIndex()
+        {
+            return blend.GetCoalIndex();
+        }
 
 
     }

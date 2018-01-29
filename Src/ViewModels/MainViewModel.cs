@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Documents;
 using ROMLoader.Annotations;
 using ROMLoader.Models;
@@ -30,8 +31,12 @@ namespace ROMLoader.ViewModels
         // Variables for displaying data.
         private Blend primaryBlend;
         private ObservableCollection<string> blendCycle;
-        private List<Stockpile> stockpiles;
-        
+        private ICollectionView stockpiles;
+        private ICollectionView coalMovements;
+        private string loadingCoal;
+        private int coalIndex;
+
+
         private int loadTime;
         private int maxWaitTime;
 
@@ -44,12 +49,17 @@ namespace ROMLoader.ViewModels
             GetBlend();
             GetStockpiles();
 
+            LoadingCoal = "";
+
 
             IncreaseLoadTimeCommand = new RelayCommand(IncreaseLoadTime);
             DecreaseLoadTimeCommand = new RelayCommand(DecreaseLoadTime);
 
             IncreaseMaxWaitTimeCommand = new RelayCommand(IncreaseMaxWaitTime);
             DecreaseMaxWaitTimeCommand = new RelayCommand(DecreaseMaxWaitTime);
+
+            LoadCoalCommand = new RelayCommand(LoadCoal);
+            CoalIndex = 0;
         }
 
         /// <summary>
@@ -78,6 +88,12 @@ namespace ROMLoader.ViewModels
             set;
         }
 
+        public RelayCommand LoadCoalCommand
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Checks if the ROM loader exists.  If not and a blend exists, 
         /// it will be created.
@@ -100,6 +116,25 @@ namespace ROMLoader.ViewModels
 
                 loader = new Loader(blend, loadTime, maxWaitTime);
                 return true;
+            }
+        }
+
+        private async void LoadCoal(object parameter)
+        {
+            if (RomLoaderExists())
+            {
+                List<CoalMovement> movements = await DatabaseQueries.GetCoalMovements(DateTime.Now, 30, database);
+
+                movements = loader.AllocateCoalMovements(DateTime.Now,
+                    movements);
+
+
+                CoalMovements = CollectionViewSource.GetDefaultView(movements);
+
+                LoadingCoal = loader.LoadROMTruck(DateTime.Now).Coal;
+
+                CoalIndex = loader.CycleIndex();
+
             }
         }
 
@@ -188,7 +223,18 @@ namespace ROMLoader.ViewModels
             LoadTime = loader.LoadTime.Minutes.ToString();
         }
 
-        public List<Stockpile> Stockpiles
+
+        public ICollectionView CoalMovements
+        {
+            get { return coalMovements; }
+            set
+            {
+                coalMovements = value;
+                OnPropertyChanged("CoalMovements");
+            }
+        }
+
+        public ICollectionView Stockpiles
         {
             get { return stockpiles; }
             set
@@ -218,6 +264,26 @@ namespace ROMLoader.ViewModels
             }
         }
 
+        public string LoadingCoal
+        {
+            get { return loadingCoal; }
+            set
+            {
+                loadingCoal = value;
+                OnPropertyChanged("LoadingCoal");
+            }
+        }
+
+        public int CoalIndex
+        {
+            get { return coalIndex; }
+            set
+            {
+                coalIndex = value;
+                OnPropertyChanged("CoalIndex");
+            }
+        }
+
         public string MaxWaitTime
         {
             get { return maxWaitTime.ToString(); }
@@ -242,7 +308,7 @@ namespace ROMLoader.ViewModels
         {
             listOfROMS = await DatabaseQueries.GetRunOfMineAsync(DateTime.Now, database);
             primaryROM = listOfROMS[0];
-            Stockpiles = primaryROM.Stockpiles;
+            Stockpiles = CollectionViewSource.GetDefaultView(primaryROM.Stockpiles);
         }
 
         /// <summary>
