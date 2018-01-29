@@ -15,10 +15,6 @@ namespace ROMLoader.Models
         //The maximum time a truck is allowed to wait before dumping coal.
         private TimeSpan maxWaitTime;
 
-        //TODO: Might need to track minimum time here.  As to allow for loading of coal.
-
-        //TODO: Create a hashmap of already loaded coal movements? Or should we update the database?
-
         /// <summary>
         /// Initialises a new ROMLoader class.
         /// </summary>
@@ -162,7 +158,7 @@ namespace ROMLoader.Models
         /// the time it is expected to be dumped into the bin.</returns>
         public CoalMovement LoadROMTruck(DateTime time)
         {
-            CoalMovement romMovement = new CoalMovement(blend.GetNextCoal(), "ROM Truck", time.Add(loadTime));
+            CoalMovement romMovement = new CoalMovement(blend.GetCurrentCoal(), "ROM Truck", time.Add(loadTime));
             return romMovement;
         }
 

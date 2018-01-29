@@ -37,7 +37,7 @@
                     <TextBlock FontSize="18" FontWeight="Bold" TextAlignment="Center" Padding="8">Stockpiles</TextBlock>
                     <DataGrid Margin="8, 0, 8 , 0" ItemsSource="{Binding Stockpiles}" AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Stockpile Number" Binding="{Binding StockPileNumber}" Width="*" />
+                            <DataGridTextColumn Header="Stockpile Number" Binding="{Binding StockPileNumber}" Width="1.2*" />
                             <DataGridTextColumn Header="Coal" Binding="{Binding Coal}"  Width="2*" />
                         </DataGrid.Columns>
                     </DataGrid>

@@ -60,7 +60,9 @@ namespace ROMLoader.ViewModels
 
             LoadCoalCommand = new RelayCommand(LoadCoal);
             CoalIndex = 0;
-        }
+
+           
+    }
 
         /// <summary>
         /// Relay commands for buttons.
