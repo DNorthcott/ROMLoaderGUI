@@ -9,16 +9,8 @@ namespace ROMLoader.Models
     public class RunOfMine : IComparable
     {
         private DateTime date;
-        private string stockpile1;
-        private string stockpile10;
-        private string stockpile2;
-        private string stockpile3;
-        private string stockpile4;
-        private string stockpile5;
-        private string stockpile6;
-        private string stockpile7;
-        private string stockpile8;
-        private string stockpile9;
+        Dictionary<string, string> stockpiles =
+            new Dictionary<string, string>();
 
         /// <summary>
         ///     Creates a new ROM object.
@@ -130,101 +122,101 @@ namespace ROMLoader.Models
 
         public string Stockpile1
         {
-            get => stockpile1;
+            get => stockpiles["stockpile1"];
             set
             {
-                stockpile1 = value;
+                stockpiles["stockpile1"] = value;
                 AddStockpile(1, value);
             }
         }
 
         public string Stockpile2
         {
-            get => stockpile2;
+            get => stockpiles["stockpile2"];
             set
             {
-                stockpile2 = value;
-                AddStockpile(2, value);
+                stockpiles["stockpile2"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile3
         {
-            get => stockpile3;
+            get => stockpiles["stockpile3"];
             set
             {
-                stockpile3 = value;
-                AddStockpile(3, value);
+                stockpiles["stockpile3"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile4
         {
-            get => stockpile4;
+            get => stockpiles["stockpile4"];
             set
             {
-                stockpile4 = value;
-                AddStockpile(4, value);
+                stockpiles["stockpile4"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile5
         {
-            get => stockpile5;
+            get => stockpiles["stockpile5"];
             set
             {
-                stockpile5 = value;
-                AddStockpile(5, value);
+                stockpiles["stockpile5"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile6
         {
-            get => stockpile6;
+            get => stockpiles["stockpile6"];
             set
             {
-                stockpile6 = value;
-                AddStockpile(6, value);
+                stockpiles["stockpile6"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile7
         {
-            get => stockpile7;
+            get => stockpiles["stockpile7"];
             set
             {
-                stockpile7 = value;
-                AddStockpile(7, value);
+                stockpiles["stockpile7"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile8
         {
-            get => stockpile8;
+            get => stockpiles["stockpile8"];
             set
             {
-                stockpile8 = value;
-                AddStockpile(8, value);
+                stockpiles["stockpile8"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile9
         {
-            get => stockpile9;
+            get => stockpiles["stockpile9"];
             set
             {
-                stockpile9 = value;
-                AddStockpile(9 , value);
+                stockpiles["stockpile9"] = value;
+                AddStockpile(1, value);
             }
         }
 
         public string Stockpile10
         {
-            get => stockpile10;
+            get => stockpiles["stockpile10"];
             set
             {
-                stockpile10 = value;
-                AddStockpile(10, value);
+                stockpiles["stockpile10"] = value;
+                AddStockpile(1, value);
             }
         }
 
