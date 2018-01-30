@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Documents;
 using ROMLoader.Annotations;
+using ROMLoader.Helpers;
 using ROMLoader.Models;
-using ROMLoader.Src.Helpers;
 using SQLite;
 
 
 namespace ROMLoader.ViewModels
 {
     /// <summary>
-    /// Links the model to the view.  Variables in this class are bound to the
-    /// GUI.  Provides the logic for events.
+    ///     Links the model to the view.  Variables in this class are bound to the
+    ///     GUI.  Provides the logic for events.
     /// </summary>
     class MainViewModel : INotifyPropertyChanged
     {
@@ -25,23 +25,19 @@ namespace ROMLoader.ViewModels
         private Blend blend;
         private List<RunOfMine> listOfROMS;
         private Loader loader;
-
         private RunOfMine primaryROM;
 
         // Variables for displaying data.
-        private Blend primaryBlend;
         private ObservableCollection<string> blendCycle;
         private ICollectionView stockpiles;
         private ICollectionView coalMovements;
         private string loadingCoal;
         private int coalIndex;
-
-
         private int loadTime;
         private int maxWaitTime;
 
         /// <summary>
-        /// Creates a new ROM.
+        ///     Create new mainviewmodel.
         /// </summary>
         public MainViewModel()
         {
@@ -50,7 +46,6 @@ namespace ROMLoader.ViewModels
             GetStockpiles();
 
             LoadingCoal = "";
-
 
             IncreaseLoadTimeCommand = new RelayCommand(IncreaseLoadTime);
             DecreaseLoadTimeCommand = new RelayCommand(DecreaseLoadTime);
@@ -61,66 +56,45 @@ namespace ROMLoader.ViewModels
             LoadCoalCommand = new RelayCommand(LoadCoal);
             CoalIndex = 0;
 
-           
-    }
-
-        /// <summary>
-        /// Relay commands for buttons.
-        /// </summary>
-        public RelayCommand IncreaseMaxWaitTimeCommand
-        {
-            get;
-            set;
-        }
-
-        public RelayCommand DecreaseMaxWaitTimeCommand
-        {
-            get;
-            set;
-        }
-
-        public RelayCommand IncreaseLoadTimeCommand
-        { get;
-          set;  
-        }
-
-        public RelayCommand DecreaseLoadTimeCommand
-        {
-            get;
-            set;
-        }
-
-        public RelayCommand LoadCoalCommand
-        {
-            get;
-            set;
         }
 
         /// <summary>
-        /// Checks if the ROM loader exists.  If not and a blend exists, 
-        /// it will be created.
+        /// Get list of stockpiles out of db.
         /// </summary>
-        /// <returns>Returns true if exists or can be created.</returns>
-        private bool RomLoaderExists()
+        /// <returns></returns>
+        private async Task GetStockpiles()
         {
-            if (loader != null)
-            {
-                return true;
-            }
-           else if (blendCycle == null)
-            {
-                return false;
-            }
-            else
-            {
-                TimeSpan loadTime = new TimeSpan(0, 0, 0, 0);
-                TimeSpan maxWaitTime = new TimeSpan(0, 0, 0, 0);
-
-                loader = new Loader(blend, loadTime, maxWaitTime);
-                return true;
-            }
+            listOfROMS = await DatabaseQueries.GetRunOfMineAsync(DateTime.Now, database);
+            primaryROM = listOfROMS[0];
+            Stockpiles = CollectionViewSource.GetDefaultView(primaryROM.Stockpiles);
         }
 
+        /// <summary>
+        /// Gets the blend cycle from the db.
+        /// </summary>
+        private async Task GetBlend()
+        {
+            List<Blend> listOfBlends = await DatabaseQueries.GetBlendsAsync(DateTime.Today, database);
+
+            // Remove the blend from the list.
+            blend = listOfBlends[0];
+
+            // Create list for blend cycle view.
+            BlendCycle = new ObservableCollection<string>(blend.Cycle);
+        }
+
+
+
+        /* ===============================
+         *  Buttons
+         * ===============================
+         */
+
+            /// <summary>
+            /// Load coal, executes loader to check for incoming coals and 
+            /// determines what the loader will load.
+            /// </summary>
+            /// <param name="parameter"></param>
         private async void LoadCoal(object parameter)
         {
             if (RomLoaderExists())
@@ -130,24 +104,25 @@ namespace ROMLoader.ViewModels
                 movements = loader.AllocateCoalMovements(DateTime.Now,
                     movements);
 
-
                 CoalMovements = CollectionViewSource.GetDefaultView(movements);
 
                 LoadingCoal = loader.LoadROMTruck(DateTime.Now).Coal;
 
                 CoalIndex = loader.CycleIndex();
 
-
                 //Update allocated movements to be loaded into bin in database.
 
                 foreach (CoalMovement m in movements)
                 {
-                   await DatabaseQueries.UpdateCoalMovements(m, database);
+                    await DatabaseQueries.UpdateCoalMovements(m, database);
                 }
             }
         }
 
-
+        /// <summary>
+        /// Increases the maxwaittime by 1 minute.
+        /// </summary>
+        /// <param name="parameter"></param>
         private void IncreaseMaxWaitTime(object parameter)
         {
             if (RomLoaderExists())
@@ -156,6 +131,10 @@ namespace ROMLoader.ViewModels
             }
         }
 
+        /// <summary>
+        /// Decreases the maxwaittime by 1 minute.
+        /// </summary>
+        /// <param name="parameter"></param>
         private void DecreaseMaxWaitTime(object parameter)
         {
 
@@ -163,14 +142,16 @@ namespace ROMLoader.ViewModels
             {
                 if (loader.MaxWaitTime.Minutes == 0)
                 {
-                    //TODO: Maybe throw a window saying cannot make negative load time. 
-                    // Further probably should throw exception.
                     return;
                 }
                 ChangeWaitTime(false);
             }
         }
 
+        /// <summary>
+        /// Increases the load time by 1 minute.
+        /// </summary>
+        /// <param name="parameter"></param>
         private void IncreaseLoadTime(object parameter)
         {
             if (RomLoaderExists())
@@ -179,21 +160,54 @@ namespace ROMLoader.ViewModels
             }
         }
 
+        /// <summary>
+        /// Decreases the load time by 1 minute.
+        /// </summary>
+        /// <param name="parameter"></param>
         private void DecreaseLoadTime(object parameter)
         {
 
-            if (RomLoaderExists()) 
+            if (RomLoaderExists())
             {
                 if (loader.LoadTime.Minutes == 0)
                 {
-                    //TODO: Maybe throw a window saying cannot make negative load time. 
-                    // Further probably should throw exception.
                     return;
                 }
                 ChangeLoadTime(false);
             }
         }
 
+        /* ===============================
+         *  Helper methods
+         * ===============================
+         */
+
+        /// <summary>
+        ///     Checks if the ROM loader exists.  If not and a blend exists,
+        ///     it will be created.
+        /// </summary>
+        /// <returns>Returns true if exists or can be created.</returns>
+        private bool RomLoaderExists()
+        {
+            if (loader != null)
+            {
+                return true;
+            }
+            if (blendCycle == null)
+            {
+                return false;
+            }
+            TimeSpan loadTime = new TimeSpan(0, 0, 0, 0);
+            TimeSpan maxWaitTime = new TimeSpan(0, 0, 0, 0);
+
+            loader = new Loader(blend, loadTime, maxWaitTime);
+            return true;
+        }
+
+        /// <summary>
+        /// Increases or decreases maximum wait time by 1 minute.
+        /// </summary>
+        /// <param name="increase">True increase, false decrease.</param>
         private void ChangeWaitTime(bool increase)
         {
             TimeSpan waitTime = loader.MaxWaitTime;
@@ -213,6 +227,10 @@ namespace ROMLoader.ViewModels
             MaxWaitTime = loader.MaxWaitTime.Minutes.ToString();
         }
 
+        /// <summary>
+        /// Increases or decreases load time time by 1 minute.
+        /// </summary>
+        /// <param name="increase">True increase, false decrease.</param>
         private void ChangeLoadTime(bool increase)
         {
             TimeSpan loadTime = loader.LoadTime;
@@ -220,7 +238,7 @@ namespace ROMLoader.ViewModels
 
             if (increase)
             {
-                
+
                 loader.LoadTime = loadTime.Add(oneMinute);
 
             }
@@ -233,9 +251,15 @@ namespace ROMLoader.ViewModels
         }
 
 
+        /* ===============================
+         *  Properties
+         *  Used for displaying information for GUI.
+         * ===============================
+         */
+
         public ICollectionView CoalMovements
         {
-            get { return coalMovements; }
+            get => coalMovements;
             set
             {
                 coalMovements = value;
@@ -245,7 +269,7 @@ namespace ROMLoader.ViewModels
 
         public ICollectionView Stockpiles
         {
-            get { return stockpiles; }
+            get => stockpiles;
             set
             {
                 stockpiles = value;
@@ -255,7 +279,7 @@ namespace ROMLoader.ViewModels
 
         public ObservableCollection<string> BlendCycle
         {
-            get { return blendCycle; }
+            get => blendCycle;
             set
             {
                 blendCycle = value;
@@ -265,17 +289,17 @@ namespace ROMLoader.ViewModels
 
         public string LoadTime
         {
-            get { return loadTime.ToString(); }
+            get => loadTime.ToString();
             set
             {
-                loadTime = Int32.Parse(value);
+                loadTime = int.Parse(value);
                 OnPropertyChanged("LoadTime");
             }
         }
 
         public string LoadingCoal
         {
-            get { return loadingCoal; }
+            get => loadingCoal;
             set
             {
                 loadingCoal = value;
@@ -285,7 +309,7 @@ namespace ROMLoader.ViewModels
 
         public int CoalIndex
         {
-            get { return coalIndex; }
+            get => coalIndex;
             set
             {
                 coalIndex = value;
@@ -295,50 +319,35 @@ namespace ROMLoader.ViewModels
 
         public string MaxWaitTime
         {
-            get { return maxWaitTime.ToString(); }
+            get => maxWaitTime.ToString();
             set
             {
-                    maxWaitTime = Int32.Parse(value);
-                    OnPropertyChanged("MaxWaitTime");
+                maxWaitTime = int.Parse(value);
+                OnPropertyChanged("MaxWaitTime");
 
             }
         }
 
-        public Blend PrimaryBlend
-        {
-            get { return primaryBlend; }
-            set
-            {
-                primaryBlend = value;
-            }
-        }
+        public Blend PrimaryBlend { get; set; }
 
-        private async Task GetStockpiles()
-        {
-            listOfROMS = await DatabaseQueries.GetRunOfMineAsync(DateTime.Now, database);
-            primaryROM = listOfROMS[0];
-            Stockpiles = CollectionViewSource.GetDefaultView(primaryROM.Stockpiles);
-        }
 
-        /// <summary>
-        /// Calls blend data from the sqlite database. 
-        /// Sets 
-        /// </summary>
-        /// <returns></returns>
-        private async Task GetBlend()
-        {
-            List<Blend> listOfBlends = await DatabaseQueries.GetBlendsAsync(DateTime.Today, database);
+        /* ===============================
+         *  Relay commands
+         * ===============================
+         */
 
-            // Remove the blend from the list.
-            blend = listOfBlends[0];
 
-            // Create list for blend cycle view.
-            BlendCycle = new ObservableCollection<string>(blend.Cycle);
-        }
+        public RelayCommand IncreaseMaxWaitTimeCommand { get; set; }
 
-        /// <summary>
-        /// TODO: Research this more. I don't know how this works and its from resharper.
-        /// </summary>
+        public RelayCommand DecreaseMaxWaitTimeCommand { get; set; }
+
+        public RelayCommand IncreaseLoadTimeCommand { get; set; }
+
+        public RelayCommand DecreaseLoadTimeCommand { get; set; }
+
+        public RelayCommand LoadCoalCommand { get; set; }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged(string name)

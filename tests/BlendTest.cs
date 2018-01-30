@@ -173,11 +173,6 @@ namespace ROMLoader.tests
 
         }
 
-        [Test]
-        public void ResetCycle()
-        {
-            //TODO: Create test stub.
-        }
 
     }
 }

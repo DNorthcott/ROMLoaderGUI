@@ -2,39 +2,28 @@
 
 namespace ROMLoader.Models
 {
+    /// <summary>
+    ///     Models a stockpile, contains a stockpile number and the type of coal.
+    /// </summary>
     public class Stockpile : IComparable
     {
-
-  
-        private string coal;
-        private int stockPileNumber;
-
-        public Stockpile(string name, string coal)
+        /// <summary>
+        ///     Constructs a new stockpile.
+        /// </summary>
+        /// <param name="number">The number of the stockpile.</param>
+        /// <param name="coal">The type of coal the stockpile contains.</param>
+        public Stockpile(int number, string coal)
         {
-            
-            this.coal = coal;
-
-            stockPileNumber = Int32.Parse(name);
+            Coal = coal;
+            StockPileNumber = number;
         }
 
-        public int StockPileNumber
-        {
-            get { return stockPileNumber; }
-        }
-
-        public string Coal
-        {
-            get { return coal; }
-        }
-
-        public override string ToString()
-        {
-            return "Stockpile " + StockPileNumber + " : " + Coal;
-        }
-
+        /// <summary>
+        ///     Compares stockpiles, sorts based on stockpile numbers where
+        ///     the lower the stockpile number comes first compared a higher number.
         public int CompareTo(object obj)
         {
-            Stockpile otherStockpile = (Stockpile)obj;
+            Stockpile otherStockpile = (Stockpile) obj;
 
             if (StockPileNumber > otherStockpile.StockPileNumber)
             {
@@ -50,6 +39,9 @@ namespace ROMLoader.Models
             }
         }
 
+        /// <summary>
+        ///     Stockpiles are considered equal when they contain the same coal and stockpile number.
+        /// </summary>
         public override bool Equals(object obj)
         {
 
@@ -64,12 +56,26 @@ namespace ROMLoader.Models
 
             Stockpile otherStockpile = (Stockpile) obj;
 
-            if (coal == otherStockpile.Coal &&
-                stockPileNumber == otherStockpile.StockPileNumber)
+            if (Coal == otherStockpile.Coal &&
+                StockPileNumber == otherStockpile.StockPileNumber)
             {
                 return true;
             }
             return false;
+        }
+
+        //------------------------------------------
+        // Properties
+        //------------------------------------------
+
+
+        public int StockPileNumber { get; }
+
+        public string Coal { get; }
+
+        public override string ToString()
+        {
+            return "Stockpile " + StockPileNumber + " : " + Coal;
         }
     }
 }

@@ -87,15 +87,15 @@ namespace ROMLoader.tests
             RunOfMine rom = new RunOfMine("2018-01-18", 1, "03S_46_J19", "13_34_F23",
                 null, "03S_46_F25", "05N_46_F25", "13_36_J17", "16S_23_G53", "16N_22_F253", "12_34_F25", "13_36_J17");
 
-            Stockpile stock1 = new Stockpile("1", "03S_46_J19");
-            Stockpile stock2 = new Stockpile("2", "13_34_F23");
-            Stockpile stock4 = new Stockpile("4", "03S_46_F25");
-            Stockpile stock5 = new Stockpile("5", "05N_46_F25");
-            Stockpile stock6 = new Stockpile("6", "13_36_J17");
-            Stockpile stock7 = new Stockpile("7", "16S_23_G53");
-            Stockpile stock8 = new Stockpile("8", "16N_22_F253");
-            Stockpile stock9 = new Stockpile("9", "12_34_F25");
-            Stockpile stock10 = new Stockpile("10", "13_36_J17");
+            Stockpile stock1 = new Stockpile(1, "03S_46_J19");
+            Stockpile stock2 = new Stockpile(2, "13_34_F23");
+            Stockpile stock4 = new Stockpile(4, "03S_46_F25");
+            Stockpile stock5 = new Stockpile(5, "05N_46_F25");
+            Stockpile stock6 = new Stockpile(6, "13_36_J17");
+            Stockpile stock7 = new Stockpile(7, "16S_23_G53");
+            Stockpile stock8 = new Stockpile(8, "16N_22_F253");
+            Stockpile stock9 = new Stockpile(9, "12_34_F25");
+            Stockpile stock10 = new Stockpile(10, "13_36_J17");
 
             List<Stockpile> stockpileTemp = new List<Stockpile>();
             stockpileTemp.Add(stock1);

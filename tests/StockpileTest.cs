@@ -15,7 +15,7 @@ namespace ROMLoader.tests
         [Test]
         public void ToStringTest()
         {
-            Stockpile stockpile = new Stockpile("1", "24S_25_J28");
+            Stockpile stockpile = new Stockpile(1, "24S_25_J28");
 
             Assert.True(stockpile.ToString() == "Stockpile 1 : 24S_25_J28");
         }
@@ -23,10 +23,10 @@ namespace ROMLoader.tests
         [Test]
         public void EqualsTest()
         {
-            Stockpile stockpile = new Stockpile("1", "24S_25_J28");
-            Stockpile stockpile1 = new Stockpile("1", "24S_25_J28");
-            Stockpile stockpile2 = new Stockpile("2", "24S_25_J28");
-            Stockpile stockpile3 = new Stockpile("1", "12S_12_H28");
+            Stockpile stockpile = new Stockpile(1, "24S_25_J28");
+            Stockpile stockpile1 = new Stockpile(1, "24S_25_J28");
+            Stockpile stockpile2 = new Stockpile(2, "24S_25_J28");
+            Stockpile stockpile3 = new Stockpile(1, "12S_12_H28");
 
             //Test for two equal stockpiles.
             Assert.True(stockpile.Equals(stockpile1));
@@ -45,10 +45,10 @@ namespace ROMLoader.tests
         [Test]
         public void CompareToTest()
         {
-            Stockpile stockpile = new Stockpile("1", "24S_25_J28");
-            Stockpile stockpile1 = new Stockpile("1", "24S_25_J28");
-            Stockpile stockpile2 = new Stockpile("2", "24S_25_J28");
-            Stockpile stockpile3 = new Stockpile("3", "12S_12_H28");
+            Stockpile stockpile = new Stockpile(1, "24S_25_J28");
+            Stockpile stockpile1 = new Stockpile(1, "24S_25_J28");
+            Stockpile stockpile2 = new Stockpile(2, "24S_25_J28");
+            Stockpile stockpile3 = new Stockpile(3, "12S_12_H28");
 
             // Test for same position.
             Assert.Zero(stockpile.CompareTo(stockpile1));

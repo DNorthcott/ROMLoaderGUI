@@ -47,10 +47,10 @@
 
             <!-- Third column for load schedule and load times. -->
             <Grid Grid.Column="2">
-                   <Grid.RowDefinitions>
-                       <RowDefinition Height="3*" />
-                       <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
                 <!-- load schedule -->
                 <Border Grid.Row="0" Background="AliceBlue" BorderThickness="10">
@@ -63,7 +63,7 @@
                                 <DataGridTextColumn Header="Truck Name" Binding="{Binding Truck}"  Width="1*"/>
                                 <DataGridTextColumn Header="Coal" Binding="{Binding Coal}"   Width="*"/>
                                 <DataGridTextColumn Header="Arrival Time" Binding="{Binding DateTimeArrival}"  Width="2*"/>
-                                
+
                             </DataGrid.Columns>
                         </DataGrid>
                         <StackPanel Orientation="Horizontal">
@@ -71,7 +71,7 @@
                             <TextBox Margin="0, 10, 0, 0" Width="150" Text = "{Binding LoadingCoal}" IsReadOnly="True"></TextBox>
                             <Button Margin="8, 10, 8, 0" Width="93" Command="{Binding LoadCoalCommand}">Load Coal</Button>
                         </StackPanel>
-                        
+
                     </StackPanel>
 
                 </Border>
@@ -80,13 +80,13 @@
                 <Border Grid.Row="1" Background="AliceBlue" BorderThickness="10">
                     <StackPanel>
                         <TextBlock FontSize="18" FontWeight="Bold" TextAlignment="Center" Padding="8">Load Time</TextBlock>
-                        
+
                         <Grid>
                             <Grid.ColumnDefinitions >
                                 <ColumnDefinition Width="160" />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
-                            
+
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="*"/>
@@ -94,7 +94,7 @@
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Padding="10, 5, 0, 0"  >Load time:</TextBlock>
                             <TextBlock Grid.Row="1" Grid.Column="0" Padding="10, 5, 0, 5">Maximum truck wait time:</TextBlock>
-                            
+
                             <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
                                 <TextBox  Margin="5,5,0,5" Width="50" Text="{Binding LoadTime}" IsReadOnly="True"   />
                                 <Button  Margin="5,5,0,5" Content="˄" Width="20" Command="{Binding IncreaseLoadTimeCommand}" />
@@ -106,22 +106,10 @@
                                 <Button  Margin="5,5,0,5"   Content="˄" Width="20" Command="{Binding IncreaseMaxWaitTimeCommand}"  />
                                 <Button  Margin="0,5,0,5"  Content="˅" Width="20" Command="{Binding DecreaseMaxWaitTimeCommand}" />
                             </StackPanel>
-
-
-
                         </Grid>
-                        
                     </StackPanel>
-
                 </Border>
-
             </Grid>
-                
-            
-            
         </Grid>
-        
     </Border>
-
-    
 </Window>

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 
 namespace ROMLoader.Models
 {
+    /// <summary>
+    ///     RunOfMine stores a list of stockpiles stored at the ROM.
+    /// </summary>
     public class RunOfMine : IComparable
     {
         private DateTime date;
-        private List<string> cycle;
         private string stockpile1;
         private string stockpile10;
         private string stockpile2;
@@ -18,11 +20,16 @@ namespace ROMLoader.Models
         private string stockpile8;
         private string stockpile9;
 
+        /// <summary>
+        ///     Creates a new ROM object.
+        /// </summary>
         public RunOfMine()
         {
-            cycle = new List<string>();
         }
 
+        /// <summary>
+        ///     Used for testing.
+        /// </summary>
         public RunOfMine(string date, int priority, string stockpile1, string stockpile2, string stockpile3,
             string stockpile4, string stockpile5, string stockpile6, string stockpile7, string stockpile8
             , string stockpile9, string stockpile10)
@@ -41,131 +48,6 @@ namespace ROMLoader.Models
             Stockpile10 = stockpile10;
         }
 
-        public string Date { get { return date.ToString(); }
-            set { date = Convert.ToDateTime(value); }
-        }
-
-        public int Priority { get; set; }
-
-        public string Stockpile1
-        {
-            get => stockpile1;
-            set
-            {
-                stockpile1 = value;
-                AddStockpile("1", value);
-            }
-        }
-
-        public string Stockpile2
-        {
-            get => stockpile2;
-            set
-            {
-                stockpile2 = value;
-                AddStockpile("2", value);
-            }
-        }
-
-        public string Stockpile3
-        {
-            get => stockpile3;
-            set
-            {
-                stockpile3 = value;
-                AddStockpile("3", value);
-            }
-        }
-
-        public string Stockpile4
-        {
-            get => stockpile4;
-            set
-            {
-                stockpile4 = value;
-                AddStockpile("4", value);
-            }
-        }
-
-        public string Stockpile5
-        {
-            get => stockpile5;
-            set
-            {
-                stockpile5 = value;
-                AddStockpile("5", value);
-            }
-        }
-
-        public string Stockpile6
-        {
-            get => stockpile6;
-            set
-            {
-                stockpile6 = value;
-                AddStockpile("6", value);
-            }
-        }
-
-        public string Stockpile7
-        {
-            get => stockpile7;
-            set
-            {
-                stockpile7 = value;
-                AddStockpile("7", value);
-            }
-        }
-
-        public string Stockpile8
-        {
-            get => stockpile8;
-            set
-            {
-                stockpile8 = value;
-                AddStockpile("8", value);
-            }
-        }
-
-        public string Stockpile9
-        {
-            get => stockpile9;
-            set
-            {
-                stockpile9 = value;
-                AddStockpile("9", value);
-            }
-        }
-
-        public string Stockpile10
-        {
-            get => stockpile10;
-            set
-            {
-                stockpile10 = value;
-                AddStockpile("10", value);
-            }
-        }
-
-        public List<Stockpile> Stockpiles { get; private set; }
-
-        // This might redundant. TODO: review
-        /*
-        public List<string> Cycle
-        {
-            get
-            {
-                if (cycle == null)
-                {
-                    cycle = new List<string>();
-                }
-
-                return cycle;
-            }
-
-        }
-        */
-
         /// <summary>
         ///     Compares the RunOfMine object.  A higher priority integer
         ///     is considered greater than the arguement.
@@ -177,7 +59,7 @@ namespace ROMLoader.Models
         /// </returns>
         public int CompareTo(object obj)
         {
-            var otherROM = (RunOfMine) obj;
+            RunOfMine otherROM = (RunOfMine) obj;
 
             if (Priority > otherROM.Priority)
                 return 1;
@@ -186,16 +68,21 @@ namespace ROMLoader.Models
             return -1;
         }
 
-        private void AddStockpile(string stockpileName, string coal)
+        /// <summary>
+        ///     Adds a stockpile to the list of stockpiles.
+        /// </summary>
+        /// <param name="stockpileName">The name of the stockpile.</param>
+        /// <param name="coal">The coal to go into the stockpile.</param>
+        private void AddStockpile(int stockpileNumber, string coal)
         {
-           
+
             if (Stockpiles == null)
                 Stockpiles = new List<Stockpile>();
 
             if (coal == null)
-                Stockpiles.Add(new Stockpile(stockpileName, "Empty"));
+                Stockpiles.Add(new Stockpile(stockpileNumber, "Empty"));
             else
-                Stockpiles.Add(new Stockpile(stockpileName, coal));
+                Stockpiles.Add(new Stockpile(stockpileNumber, coal));
         }
 
         /// <summary>
@@ -206,18 +93,18 @@ namespace ROMLoader.Models
         /// <returns>True if equal.</returns>
         public override bool Equals(object obj)
         {
-            var equal = true;
+            bool equal = true;
 
             if (obj == null)
                 return false;
             if (obj.GetType() != GetType())
                 return false;
 
-            var otherROM = (RunOfMine) obj;
+            RunOfMine otherROM = (RunOfMine) obj;
 
             if (Date == otherROM.Date && Priority == otherROM.Priority)
             {
-                var otherStockpileses = otherROM.Stockpiles;
+                List<Stockpile> otherStockpileses = otherROM.Stockpiles;
                 foreach (var s in Stockpiles)
                     if (!otherStockpileses.Contains(s))
                         equal = false;
@@ -228,5 +115,119 @@ namespace ROMLoader.Models
             }
             return equal;
         }
+
+        //--------------------------------------------------
+        // Properties
+        //--------------------------------------------------
+
+        public string Date
+        {
+            get => date.ToString();
+            set => date = Convert.ToDateTime(value);
+        }
+
+        public int Priority { get; set; }
+
+        public string Stockpile1
+        {
+            get => stockpile1;
+            set
+            {
+                stockpile1 = value;
+                AddStockpile(1, value);
+            }
+        }
+
+        public string Stockpile2
+        {
+            get => stockpile2;
+            set
+            {
+                stockpile2 = value;
+                AddStockpile(2, value);
+            }
+        }
+
+        public string Stockpile3
+        {
+            get => stockpile3;
+            set
+            {
+                stockpile3 = value;
+                AddStockpile(3, value);
+            }
+        }
+
+        public string Stockpile4
+        {
+            get => stockpile4;
+            set
+            {
+                stockpile4 = value;
+                AddStockpile(4, value);
+            }
+        }
+
+        public string Stockpile5
+        {
+            get => stockpile5;
+            set
+            {
+                stockpile5 = value;
+                AddStockpile(5, value);
+            }
+        }
+
+        public string Stockpile6
+        {
+            get => stockpile6;
+            set
+            {
+                stockpile6 = value;
+                AddStockpile(6, value);
+            }
+        }
+
+        public string Stockpile7
+        {
+            get => stockpile7;
+            set
+            {
+                stockpile7 = value;
+                AddStockpile(7, value);
+            }
+        }
+
+        public string Stockpile8
+        {
+            get => stockpile8;
+            set
+            {
+                stockpile8 = value;
+                AddStockpile(8, value);
+            }
+        }
+
+        public string Stockpile9
+        {
+            get => stockpile9;
+            set
+            {
+                stockpile9 = value;
+                AddStockpile(9 , value);
+            }
+        }
+
+        public string Stockpile10
+        {
+            get => stockpile10;
+            set
+            {
+                stockpile10 = value;
+                AddStockpile(10, value);
+            }
+        }
+
+        public List<Stockpile> Stockpiles { get; private set; }
     }
 }

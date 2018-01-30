@@ -1,69 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace ROMLoader.Models
 {
+    /// <summary>
+    ///     The loader represents the truck that loads coal at the ROM.  The loader class is responsible
+    ///     for allocating incoming trucks based on a blend cycle based on a load time and the maximum
+    ///     time a truck is allowed to wait before dumping coal.
+    /// </summary>
     public class Loader
     {
-        // Represents the sequence coals must be blended.
-        private Blend blend;
-
-        // The time it takes to load a truck.
-        private TimeSpan loadTime;
-
-        //The maximum time a truck is allowed to wait before dumping coal.
-        private TimeSpan maxWaitTime;
-
         /// <summary>
-        /// Initialises a new ROMLoader class.
+        ///     Creates a new Loader object.
         /// </summary>
         /// <param name="blendCycle">The list that contains the sequence of how coals are to be loaded.</param>
         /// <param name="maxWaitTime">The maximum time a truck is allowed to wait before dumping coal.</param>
         /// <param name="loadTime">The time it takes to load a truck.</param>
         public Loader(Blend blend, TimeSpan maxWaitTime, TimeSpan loadTime)
         {
-            this.blend = blend;
-            this.maxWaitTime = maxWaitTime;
-            this.loadTime = loadTime;
-            
-        }
+            Blend = blend;
+            MaxWaitTime = maxWaitTime;
+            LoadTime = loadTime;
 
-        public TimeSpan LoadTime
-        {
-            get { return loadTime; }
-            set { loadTime = value; }
-        }
-
-        public TimeSpan MaxWaitTime
-        {
-            get { return maxWaitTime; }
-            set { maxWaitTime = value; }
-        }
-
-        public Blend Blend
-        {
-            get { return blend; }
         }
 
         /// <summary>
-        /// Determines which trucks that are coming from the pit are to be fed to the ROM bin.  The returned list 
-        /// indicates which trucks are to be fed into the bin.  CoalMovements not in this list are dumped at stockpiles.
-        /// 
-        /// Takes the minimumTime as the starting time of loading and either finds a truck with the required coal 
-        /// next in the coal cycle or uses the rom loader to create a new CoalMovement.
-        ///
-        /// If a CoalMovement with the required coal arrives in less than the loading time but greater than 
-        /// the minimum time then it is allocated to the bin.  If a CoalMovement has been found the next coal 
-        /// in the blending cycle is inspected, the minimumtime is moved forward to the time of the last truck 
-        /// arrival time to preserve ordering of coal loading into the bin and the time range allowed for dumping is
-        /// increased proportational to the loadTime for this class.
-        /// 
-        /// //TODO: clean this up
-        /// //If a movement is accepted, the arrival time of that truck becomes the minimum time.
-        /// //If the next coal in cycle can be found within the (minimum time - maximum wait time) and minimumtime + loading time
-        /// // that coal is also allocated. 
-        /// 
+        ///     Allocates coal movements to either feed into the bin or to stockpile.
+        ///     The trucks are allocated based on their arrival times and the loaders load time and trucks maximum wait
+        ///     time.
+        ///     The start time indicates the time when the loader will start loading.  If a coalmovement with the required
+        ///     coal will arrive between the start time and (start time + load time) that movement is allocated.
+        ///     After a coal movement has been allocated, the next required coal is searched for.  It must now fall within
+        ///     the previous trucks (arrival time - maximum wait time) and (arrival time + load time).
+        ///     This method attempts to have a coal movement fed into the bin in intervals less than the load time.
         /// </summary>
         /// <param name="startTime">The starting time of loading.</param>
         /// <param name="incomingTrucks">List of coal movements coming from the pit.</param>
@@ -73,43 +42,40 @@ namespace ROMLoader.Models
             // List of coal movements to be dumped into the bin.
             List<CoalMovement> allocatedCoalMovements = new List<CoalMovement>();
 
-
-
             incomingTrucks.Sort();
 
             // Variable to hold the next coal required in blending cycle.
-            string requiredCoal = blend.GetNextCoal();
+            string requiredCoal = Blend.GetNextCoal();
 
-            DateTime maximumTime = startTime.Add(loadTime);
-            /*                
-            
-            maximumTime = maximumTime.Add(maxWaitTime);
-            */
+            DateTime maximumTime = startTime.Add(LoadTime);
 
-            // Variable to keep while loop looping until no CoalMovements can be allocated.
+            // Variable to keep while loop looping until no more CoalMovements can be allocated.
             bool foundMovement = true;
 
             while (foundMovement)
             {
                 // Find coal movements.  
-                foundMovement = FindRequiredCoal(startTime, maximumTime ,requiredCoal, incomingTrucks, allocatedCoalMovements);
+                foundMovement = FindRequiredCoal(startTime, maximumTime, requiredCoal,
+                    incomingTrucks, allocatedCoalMovements);
 
-                //If a truck was found.  Change new time to be the time the truck loaded coal into the bin minus
-                // the max wait time.  This allows a truck to wait at the ROM.
+                /*If a coalmovement was found,  change start time to be the time the truck loaded coal into the bin 
+                  minus the max wait time.  This allows a truck to wait at the ROM.
+                  Update maximumtime to be the coalmovements start time + load time.
+                */
                 if (allocatedCoalMovements.Count != 0)
                 {
                     startTime = allocatedCoalMovements[allocatedCoalMovements.Count - 1].PropDateTime;
 
-                    maximumTime = startTime.Add(loadTime);
+                    maximumTime = startTime.Add(LoadTime);
 
-                    startTime = startTime.Subtract(maxWaitTime);
+                    startTime = startTime.Subtract(MaxWaitTime);
                 }
 
                 if (foundMovement)
                 {
-                    requiredCoal = blend.GetNextCoal();
+                    requiredCoal = Blend.GetNextCoal();
                 }
-  
+
             }
 
             return allocatedCoalMovements;
@@ -117,62 +83,93 @@ namespace ROMLoader.Models
 
 
         /// <summary>
-        /// Finds if a CoalMovement is in the incomingCoalMovements falls with inside the minimum and maximum 
-        /// time with the required coal.
+        ///     Finds if a CoalMovement is in the incomingCoalMovements falls with inside the minimum and maximum
+        ///     time with the required coal.
         /// </summary>
-        /// <param name="time"></param>
-        /// <param name="requiredCoal"></param>
-        /// <param name="incomingCoalMovements"></param>
-        /// <param name="resultOfMovements"></param>
-        /// <returns></returns>
-        private bool FindRequiredCoal(DateTime minimumTime, DateTime maximumTime , string requiredCoal, List<CoalMovement> incomingCoalMovements,
-            List<CoalMovement> resultOfMovements)
+        /// <param name="maximumTime">The maximum time in which to find a coal movement.</param>
+        /// <param name="requiredCoal">The type of coal required.</param>
+        /// <param name="incomingCoalMovements">A list of coalmovements.</param>
+        /// <param name="resultOfMovements">
+        ///     A list of allocated trucks, this is used as a reference type
+        ///     to add allocated trucks to it.
+        /// </param>
+        /// <param name="minimumTime">The minimum time in which to find a coal movement.</param>
+        /// <returns>True if found, false if not found.</returns>
+        private bool FindRequiredCoal(DateTime minimumTime, DateTime maximumTime, string requiredCoal,
+            List<CoalMovement> incomingCoalMovements, List<CoalMovement> resultOfMovements)
         {
 
-                foreach (CoalMovement coalMovement in incomingCoalMovements)
+            foreach (CoalMovement coalMovement in incomingCoalMovements)
+            {
+
+                if (coalMovement.Coal == requiredCoal && coalMovement.PropDateTime <= maximumTime &&
+                    coalMovement.PropDateTime >= minimumTime && coalMovement.Coal == requiredCoal)
                 {
+                    // Add the coal movement to the results of movements list.
+                    resultOfMovements.Add(coalMovement);
 
-                   if (coalMovement.Coal == requiredCoal && coalMovement.PropDateTime <= maximumTime &&
-                        coalMovement.PropDateTime >= minimumTime && coalMovement.Coal == requiredCoal)
-                    {
-                        // Add the coal movement to the results of movements list.
-                        resultOfMovements.Add(coalMovement);
+                    // Remove coal from movements - Cannt be used again.
+                    incomingCoalMovements.Remove(coalMovement);
 
-                        // Remove coal from movements - Cannt be used again.
-                        incomingCoalMovements.Remove(coalMovement);
-
-                        return true;
-                    }
+                    return true;
                 }
-            
+            }
+
             //Coal required not found.  Exit out and load coal with loader.
             return false;
         }
 
         /// <summary>
-        /// Creates a new coal movement with the next coal in the blend.
+        ///     Creates a new coal movement with the next coal in the blend.
         /// </summary>
-        /// <param name="requiredCoal">The coal in the the coal movement.</param>
+        /// <param name="requiredCoal">The required coal to be loaded.</param>
         /// <param name="time">The time the truck started to be loaded.</param>
-        /// <returns>A coal movement with the required next coal in the blend and 
-        /// the time it is expected to be dumped into the bin.</returns>
+        /// <returns>
+        ///     A coal movement with the required next coal in the blend and
+        ///     the time it is expected to be dumped into the bin.
+        /// </returns>
         public CoalMovement LoadROMTruck(DateTime time)
         {
-            CoalMovement romMovement = new CoalMovement(blend.GetCurrentCoal(), "ROM Truck", time.Add(loadTime));
+            CoalMovement romMovement = new CoalMovement(Blend.GetCurrentCoal(), "ROM Truck", time.Add(LoadTime));
             return romMovement;
         }
 
-
+        /// <summary>
+        ///     Resets the blend to the starting point.
+        /// </summary>
         public void ResetBlend()
         {
-            blend.ResetCycle();
+            Blend.ResetCycle();
         }
 
+        /// <summary>
+        ///     Returns the index in which the blend is currently at.
+        /// </summary>
         public int CycleIndex()
         {
-            return blend.GetCoalIndex();
+            return Blend.GetCoalIndex();
         }
 
+        //-------------------------------------
+        // Properties
+        //-------------------------------------
 
+        /// <summary>
+        /// Represents the time required to load coal into a truck.
+        /// This also represents time when allocated coals, the maximum interval
+        /// between incoming trucks.
+        /// </summary>
+        public TimeSpan LoadTime { get; set; }
+
+
+        /// <summary>
+        /// The maximum time in minutes a truck is allowed to wait before dumping coal.
+        /// </summary>
+        public TimeSpan MaxWaitTime { get; set; }
+
+        /// <summary>
+        /// The blend that the loader uses to determine the sequence of coals to be loaded/allocated.
+        /// </summary>
+        public Blend Blend { get; }
     }
 }

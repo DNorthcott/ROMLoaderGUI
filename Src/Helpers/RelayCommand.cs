@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace ROMLoader.Src.Helpers
+namespace ROMLoader.Helpers
 {
     /// <summary>
     /// Taken from http://msdn.microsoft.com/en-us/magazine/dd419663.aspx#id0090030
+    /// Used to allow binding between buttons and the viewmodel.
     /// </summary>
 
     class RelayCommand : ICommand
