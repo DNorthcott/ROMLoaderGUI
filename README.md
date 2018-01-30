@@ -46,7 +46,7 @@ dumping its coal and change the time for the loader to load coal.
 
 
 ### How coal movements are allocated.
-The system allows the loader to determine the maximum wait time, the required time to load coal.
+The system allows the loader to determine the maximum wait time and the required time to load coal.
 
 When the load coal button is clicked, the system will make a call to the database getting all 
 coal movements that are coming from the pit.  If the required coal is in this list and arrives between
