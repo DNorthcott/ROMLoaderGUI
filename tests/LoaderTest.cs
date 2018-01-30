@@ -37,12 +37,16 @@ namespace ROMLoader.tests
             //Load first coal in cycle.
             DateTime startLoadingTime = new DateTime(2018, 01, 23, 02, 20, 22);
             Assert.AreEqual(coalMovement, loader.LoadROMTruck(startLoadingTime));
+            loader.Blend.GetNextCoal();
+            loader.Blend.GetNextCoal();
 
             //Load following two coals in cycle.
 
             DateTime startLoadingTime2 = new DateTime(2018, 01, 23, 09, 57, 22);
+            CoalMovement test = loader.LoadROMTruck(startLoadingTime2);
             Assert.AreEqual(coalMovement2, loader.LoadROMTruck(startLoadingTime2));
 
+            loader.Blend.GetNextCoal();
             DateTime startLoadingTime3 = new DateTime(2018, 05, 24, 02, 27, 22);
             Assert.AreEqual(coalMovement3, loader.LoadROMTruck(startLoadingTime3));
 

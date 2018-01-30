@@ -95,7 +95,7 @@ namespace ROMLoader.tests
             Stockpile stock7 = new Stockpile("7", "16S_23_G53");
             Stockpile stock8 = new Stockpile("8", "16N_22_F253");
             Stockpile stock9 = new Stockpile("9", "12_34_F25");
-            Stockpile stock10 = new Stockpile("10", "12_34_F25");
+            Stockpile stock10 = new Stockpile("10", "13_36_J17");
 
             List<Stockpile> stockpileTemp = new List<Stockpile>();
             stockpileTemp.Add(stock1);
@@ -111,12 +111,12 @@ namespace ROMLoader.tests
             List<Stockpile> stockpiles = rom.Stockpiles;
 
             //Check there is the correct number of stockpiles.
-            Assert.AreEqual(stockpiles.Count, 9);
+            Assert.AreEqual( 10, stockpiles.Count);
 
             //Check each stockpile exists.
-            foreach (Stockpile s in stockpiles)
+            foreach (Stockpile s in stockpileTemp)
             {
-                Assert.True(stockpileTemp.Contains(s));
+                Assert.True(stockpiles.Contains(s));
             }
             {
 
